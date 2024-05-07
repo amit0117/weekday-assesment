@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-import ProductCard from "./ProductCard";
-import Loader from "./Loader";
+// import Loader from "./Loader";
+import JobCard from "./components/JobCard";
+const url='https://api.weekday.technology/adhoc/getSampleJdJSON';
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -12,13 +12,21 @@ const App = () => {
     if (isLoading) return;
 
     setIsLoading(true);
-
-    axios
-      .get(`https://api.escuelajs.co/api/v1/products?offset=${index}0&limit=12`)
-      .then((res) => {
-        setItems((prevItems) => [...prevItems, ...res.data]);
-      })
-      .catch((err) => console.log(err));
+    const body = JSON.stringify({
+      "limit": 10,
+      "offset": 0
+     });
+     const config = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body
+     };
+     fetch(url, config)
+     .then((response) => response.text())
+     .then((result) => console.log(result))
+     .catch((error) => console.error(error));
     setIndex((prevIndex) => prevIndex + 1);
 
     setIsLoading(false);
@@ -28,14 +36,29 @@ const App = () => {
     const getData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          "https://api.escuelajs.co/api/v1/products?offset=10&limit=12"
-        );
-        setItems(response.data);
+        const body = JSON.stringify({
+          "limit": 12,
+          "offset": 10
+         });
+         const config = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body
+         };
+
+       const response = await fetch(url,config);
+       const data=(await response.json()).jdList;
+       console.log("in first use effect response",data[0]);
+        setItems(data);
+
       } catch (error) {
         console.log(error);
       }
+      finally{
       setIsLoading(false);
+      }
     };
 
     getData();
@@ -58,12 +81,13 @@ const App = () => {
 
   return (
     <div className='container'>
-      <div className='row'>
-        {items.map((item) => (
-          <ProductCard data={item} key={item.id} />
-        ))}
+      <div className="min-w-full text-center text-lg font-bold border-[2px] rounded-lg mb-4 py-2">All Jobs</div>
+      <div className='flex justify-center items-center gap-2 flex-wrap'>
+       {
+        items.map((job)=><JobCard job={job} key={job.jdUid}/>)
+       }
       </div>
-      {isLoading && <Loader />}
+      {/* {isLoading && <Loader />} */}
     </div>
   );
 };
