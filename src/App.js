@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-// import Loader from "./Loader";
 import JobCard from "./components/JobCard";
+import { Loader } from "./components/Loader";
 const url='https://api.weekday.technology/adhoc/getSampleJdJSON';
 
 const App = () => {
@@ -24,8 +24,8 @@ const App = () => {
       body
      };
      fetch(url, config)
-     .then((response) => response.text())
-     .then((result) => console.log(result))
+     .then((response) => response.json())
+     .then((result) => setItems((prevItems) => [...prevItems, ...result.jdList]))
      .catch((error) => console.error(error));
     setIndex((prevIndex) => prevIndex + 1);
 
@@ -50,7 +50,6 @@ const App = () => {
 
        const response = await fetch(url,config);
        const data=(await response.json()).jdList;
-       console.log("in first use effect response",data[0]);
         setItems(data);
 
       } catch (error) {
@@ -87,7 +86,7 @@ const App = () => {
         items.map((job)=><JobCard job={job} key={job.jdUid}/>)
        }
       </div>
-      {/* {isLoading && <Loader />} */}
+      {isLoading && <Loader />}
     </div>
   );
 };
