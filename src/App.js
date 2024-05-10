@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import JobCard from "./components/JobCard";
 import { Loader } from "./components/Loader";
-const url='https://api.weekday.technology/adhoc/getSampleJdJSON';
+import {getSampleJdJSON} from './dummydata'
 
+const item=getSampleJdJSON();
+const url='https://api.weekday.technology/adhoc/getSampleJdJSON';
 const App = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,11 +81,11 @@ const App = () => {
   }, [fetchData]);
 
   return (
-    <div className='container'>
+    <div >
       <div className="min-w-full text-center text-lg font-bold border-[2px] rounded-lg mb-4 py-2">All Jobs</div>
       <div className='flex justify-center items-center gap-2 flex-wrap'>
        {
-        items.map((job)=><JobCard job={job} key={job.jdUid}/>)
+       items.map((job)=><JobCard job={job} key={job.jdUid}/>)
        }
       </div>
       {isLoading && <Loader />}
